@@ -20,21 +20,36 @@ CUT_Y = 60            # 위쪽에서 잘라낼 띠의 시작 (모서리 곡선 �
 INS_Y = H - 60        # 아래쪽에서 같은 높이의 띠를 끼워 넣는 위치
 
 FB = "https://cdn.jsdelivr.net/npm/@fontsource"
+FONT_DIR = "/tmp/wm_fonts"
 KO_RANGE = "U+1100-11FF,U+3000-303F,U+3130-318F,U+A960-A97F,U+AC00-D7FF,U+FF00-FFEF"
-FONT_CSS = "".join(
-    f"@font-face{{font-family:'Noto Sans KR';font-weight:{w};font-style:normal;font-display:block;"
-    f"src:url({FB}/noto-sans-kr/files/noto-sans-kr-korean-{w}-normal.woff2) format('woff2');"
-    f"unicode-range:{KO_RANGE};}}"
-    f"@font-face{{font-family:'Noto Sans KR';font-weight:{w};font-style:normal;font-display:block;"
-    f"src:url({FB}/noto-sans-kr/files/noto-sans-kr-latin-{w}-normal.woff2) format('woff2');"
-    f"unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,"
-    f"U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}}"
-    for w in (400, 500, 700, 900)
-) + "".join(
-    f"@font-face{{font-family:'IBM Plex Mono';font-weight:{w};font-style:normal;font-display:block;"
-    f"src:url({FB}/ibm-plex-mono/files/ibm-plex-mono-latin-{w}-normal.woff2) format('woff2');}}"
-    for w in (600, 700)
-)
+LATIN_RANGE = ("U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,"
+               "U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD")
+
+
+def fetch(rel):
+    """폰트를 파이썬(시스템 CA)으로 내려받아 로컬 파일로 캐시 — Chromium 은 샌드박스 프록시 인증서를 신뢰하지 못함."""
+    import urllib.request
+    dst = os.path.join(FONT_DIR, rel.rsplit("/", 1)[-1])
+    if not os.path.exists(dst):
+        os.makedirs(FONT_DIR, exist_ok=True)
+        with urllib.request.urlopen(f"{FB}/{rel}", timeout=60) as r, open(dst, "wb") as f:
+            f.write(r.read())
+    return dst
+
+
+def font_css():
+    css = []
+    for w in (400, 500, 700, 900):
+        ko = fetch(f"noto-sans-kr/files/noto-sans-kr-korean-{w}-normal.woff2")
+        la = fetch(f"noto-sans-kr/files/noto-sans-kr-latin-{w}-normal.woff2")
+        css.append(f"@font-face{{font-family:'Noto Sans KR';font-weight:{w};font-display:block;src:url(file://{ko}) format('woff2');unicode-range:{KO_RANGE};}}")
+        css.append(f"@font-face{{font-family:'Noto Sans KR';font-weight:{w};font-display:block;src:url(file://{la}) format('woff2');unicode-range:{LATIN_RANGE};}}")
+    for w in (600, 700):
+        mo = fetch(f"ibm-plex-mono/files/ibm-plex-mono-latin-{w}-normal.woff2")
+        css.append(f"@font-face{{font-family:'IBM Plex Mono';font-weight:{w};font-display:block;src:url(file://{mo}) format('woff2');}}")
+    # 카드 뒤 페이지 배경이 둥근 모서리에 찍히지 않도록 투명 처리 (기존 html2canvas 결과와 동일)
+    css.append("html,body,.rail{background:transparent!important}")
+    return "".join(css)
 
 
 def find_chrome():
@@ -70,10 +85,10 @@ def main():
         browser = p.chromium.launch(executable_path=chrome, args=["--no-sandbox"]) if chrome else p.chromium.launch(args=["--no-sandbox"])
         page = browser.new_page(viewport={"width": 1200, "height": 1600}, device_scale_factor=W / 320)
         page.on("requestfailed", lambda r: failed.append(r.url))
-        allowed = ("file:", "data:", "https://cdn.jsdelivr.net/", "https://cdnjs.cloudflare.com/")
+        allowed = ("file:", "data:")
         page.route("**/*", lambda route: route.continue_() if route.request.url.startswith(allowed) else route.abort())
         page.goto("file://" + html_path, wait_until="load")
-        page.add_style_tag(content=FONT_CSS)
+        page.add_style_tag(content=font_css())
         page.evaluate("document.fonts.ready.then(()=>1).catch(()=>1)")
         page.evaluate("Promise.all(['400','500','700','900'].map(w=>document.fonts.load(w+' 20px \"Noto Sans KR\"','가A').catch(()=>null)))")
         page.wait_for_timeout(800)

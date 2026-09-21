@@ -44,7 +44,7 @@ def main():
         z, x, y = zoom_expr(k)
         parts.append(
             f"[{k}:v]scale=1080:1350,setsar=1,zoompan=z='{z}':x='{x}':y='{y}':d=1:s=1080x1350:fps={FPS},"
-            f"trim=duration={CLIP},setpts=PTS-STARTPTS,format=yuv420p[v{k}]"
+            f"trim=duration={CLIP},setpts=PTS-STARTPTS,fps={FPS},format=yuv420p[v{k}]"
         )
     last = "v0"
     for k in range(1, n):
