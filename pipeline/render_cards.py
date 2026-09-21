@@ -5,7 +5,7 @@ usage: render_cards.py <html_path> <out_dir>
 
 - 클라우드 루틴 환경의 사전 설치 Chromium(/opt/pw-browsers) + playwright 사용
 - 한글 폰트는 jsDelivr(@fontsource) 로 주입 (환경에 CJK 폰트가 없음)
-- 후처리: 내용 전체를 25px 위로 올려 하단 여백을 확보 (둥근 모서리 곡선 영역은 그대로 보존)
+- 후처리: 제목 위 빈 띠 25px 를 제거하고 아래에 삽입해 하단 여백 확보 (라벨·배지·둥근 모서리는 그대로 보존)
 """
 import glob
 import os
@@ -16,7 +16,6 @@ from playwright.sync_api import sync_playwright
 
 W, H = 1080, 1350
 SHIFT = 25            # 하단 여백 확보용(px @1080)
-CUT_Y = 60            # 위쪽에서 잘라낼 띠의 시작 (모서리 곡선 반경 47px 아래, 내용 시작 y≈90 위)
 INS_Y = H - 60        # 아래쪽에서 같은 높이의 띠를 끼워 넣는 위치
 
 FB = "https://cdn.jsdelivr.net/npm/@fontsource"
@@ -57,14 +56,33 @@ def find_chrome():
     return hits[-1] if hits else None
 
 
+def find_cut_y(img: Image.Image):
+    """상단 라벨/배지 아래(y>=175)에서 SHIFT 행 연속으로 배경색만 있는 빈 띠의 시작 y 를 찾는다."""
+    run = 0
+    for y in range(175, H - 400):
+        lo_hi = img.crop((8, y, W - 8, y + 1)).convert("RGB").getextrema()
+        if all(hi - lo <= 10 for lo, hi in lo_hi):
+            run += 1
+            if run >= SHIFT:
+                return y - SHIFT + 1
+        else:
+            run = 0
+    return None
+
+
 def add_bottom_margin(img: Image.Image) -> Image.Image:
-    """위 CUT_Y 부터 SHIFT px 띠를 제거하고, 아래 INS_Y 위치에 같은 높이의 배경색 띠를 삽입."""
+    """빈 띠(SHIFT px)를 제거하고 아래쪽(INS_Y)에 같은 높이의 배경색 띠를 삽입 → 하단 여백 확보.
+    상단 라벨/배지 위치는 그대로, 제목 이하 내용만 SHIFT px 위로 올라간다."""
     img = img.convert("RGBA")
     if img.size != (W, H):
         img = img.resize((W, H), Image.LANCZOS)
+    cut = find_cut_y(img)
+    if cut is None:
+        print("WARN: no blank band found, margin shift skipped")
+        return img
     bg = img.getpixel((8, INS_Y - 1))  # 카드 왼쪽 안쪽 가장자리의 배경색
-    top = img.crop((0, 0, W, CUT_Y))
-    mid = img.crop((0, CUT_Y + SHIFT, W, INS_Y))
+    top = img.crop((0, 0, W, cut))
+    mid = img.crop((0, cut + SHIFT, W, INS_Y))
     bot = img.crop((0, INS_Y, W, H))
     strip = Image.new("RGBA", (W, SHIFT), bg)
     out = Image.new("RGBA", (W, H), (0, 0, 0, 0))
