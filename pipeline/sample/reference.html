@@ -1,0 +1,802 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found]){display:none!important}</style></head><body>
+<title>칼퇴각 워크노트</title>
+<meta charset="utf-8">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=IBM+Plex+Mono:wght@600;700&display=swap');
+
+:root{
+  --ink:#141414;
+  --sun:#FFE034;
+  --coral:#FF4B3E;
+  --mint:#00D2A0;
+  --paper:#FFFFFF;
+  --ground:#EDEEF2;
+  --ground-line:#D8DAE2;
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;}
+body{
+  background:var(--ground);
+  color:var(--ink);
+  font-family:'Noto Sans KR','Malgun Gothic',sans-serif;
+  word-break:keep-all;
+  overflow-wrap:break-word;
+  -webkit-font-smoothing:antialiased;
+}
+
+.wrap{
+  max-width:1000px;
+  margin:0 auto;
+  padding:clamp(24px,5vw,52px) 0 90px;
+}
+
+/* ---------- masthead ---------- */
+.masthead{
+  text-align:center;
+  padding:0 20px;
+  margin-bottom:clamp(22px,4vw,32px);
+}
+.masthead .eyebrow-tag{
+  display:inline-block;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.08em;
+  color:#787c8f;
+  text-transform:uppercase;
+}
+.masthead h1{
+  font-family:'Noto Sans KR','Malgun Gothic',sans-serif;
+  font-weight:700;
+  font-size:clamp(21px,3.6vw,26px);
+  line-height:1.4;
+  margin:8px 0 6px;
+  color:var(--ink);
+}
+.masthead p{
+  color:#787c8f;
+  font-size:13.5px;
+  font-weight:500;
+  margin:0;
+}
+
+/* ---------- carousel ---------- */
+.rail-hint{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  font-family:'Noto Sans KR','Malgun Gothic',sans-serif;
+  font-size:12.5px;
+  font-weight:700;
+  color:#9296a6;
+  margin:0 0 12px;
+}
+.rail-hint .arrow{display:inline-block;animation:nudge 1.4s ease-in-out infinite;}
+@media (prefers-reduced-motion: reduce){.rail-hint .arrow{animation:none;}}
+@keyframes nudge{0%,100%{transform:translateX(0);}50%{transform:translateX(6px);}}
+
+.rail{
+  display:flex;
+  gap:14px;
+  overflow-x:auto;
+  scroll-snap-type:x mandatory;
+  padding:4px clamp(16px,8vw,120px) 22px;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+.rail::-webkit-scrollbar{display:none;}
+
+.card{
+  flex:0 0 auto;
+  scroll-snap-align:center;
+  width:min(320px,80vw);
+  aspect-ratio:4/5;
+  border-radius:14px;
+  padding:26px 26px 22px;
+  display:flex;
+  flex-direction:column;
+  position:relative;
+  overflow:hidden;
+}
+
+.card.bg-coral{background:var(--coral);color:var(--paper);}
+.card.bg-sun{background:var(--sun);color:var(--ink);}
+.card.bg-mint{background:var(--mint);color:var(--ink);}
+.card.bg-ink{background:var(--ink);color:var(--paper);}
+
+.card .brand{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10.5px;
+  font-weight:700;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  opacity:.68;
+  margin-bottom:auto;
+}
+
+.card h2{
+  font-family:'Noto Sans KR','Malgun Gothic',sans-serif;
+  font-weight:900;
+  font-size:clamp(26px,6.4vw,32px);
+  line-height:1.28;
+  letter-spacing:-.01em;
+  margin:14px 0 0;
+}
+.card.card--hook{justify-content:flex-start;background:var(--paper);color:var(--ink);}
+.card.card--hook .brand{color:var(--ink);opacity:.55;}
+.card.card--hook .cover-art{
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-top:16px;
+}
+.card.card--hook .cover-art svg{width:min(170px,62%);height:auto;}
+.card.card--hook h2{
+  font-size:clamp(23px,5.6vw,27px);
+  display:flex;
+  flex-direction:column;
+  gap:1px;
+  margin-top:14px;
+}
+.card.card--hook .line1{
+  font-weight:700;
+  font-size:.72em;
+  color:var(--ink);
+  opacity:.75;
+}
+.card.card--hook .line2{
+  font-weight:900;
+  font-size:1.14em;
+  color:var(--coral);
+}
+.card.card--hook .sub{
+  color:var(--ink);
+  opacity:.65;
+  margin-top:8px;
+  font-size:13px;
+  line-height:1.5;
+}
+.card.card--hook .cover-tag{
+  position:absolute;
+  top:26px;
+  left:26px;
+  right:26px;
+}
+
+.card .sub{
+  font-size:14.5px;
+  font-weight:500;
+  line-height:1.6;
+  margin:12px 0 0;
+  opacity:.88;
+}
+
+.card .keys{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:5px;
+  margin:16px 0 10px;
+}
+.key{
+  font-family:'IBM Plex Mono',monospace;
+  font-weight:700;
+  font-size:12.5px;
+  background:rgba(20,20,20,.12);
+  color:currentColor;
+  border-radius:6px;
+  padding:4px 8px;
+}
+.card.bg-ink .key{background:rgba(255,255,255,.14);}
+.plus{font-weight:700;opacity:.55;font-size:12.5px;}
+
+.card .desc{
+  font-size:13.5px;
+  font-weight:500;
+  line-height:1.6;
+  margin:0;
+  opacity:.9;
+}
+
+.card .usage{
+  margin-top:auto;
+  padding-top:14px;
+  font-size:12px;
+  font-weight:700;
+  opacity:.75;
+}
+.card .usage::before{content:"→  ";}
+
+.card .num{
+  position:absolute;
+  bottom:14px;
+  right:18px;
+  font-family:'Noto Sans KR','Malgun Gothic',sans-serif;
+  font-weight:900;
+  font-size:64px;
+  line-height:1;
+  color:currentColor;
+  opacity:.14;
+}
+
+/* save nudge on last content card */
+.card .save-badge{
+  position:absolute;
+  top:22px;
+  right:22px;
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  font-family:'Noto Sans KR','Malgun Gothic',sans-serif;
+  font-weight:700;
+  font-size:11px;
+  background:var(--ink);
+  color:var(--sun);
+  padding:6px 10px;
+  border-radius:999px;
+  white-space:nowrap;
+}
+
+/* CTA / follow card */
+.card.cta-card{justify-content:space-between;}
+.card.cta-card h2{font-size:clamp(25px,6vw,30px);}
+.card.cta-card .sub{margin-top:10px;}
+.save-cta{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  background:var(--sun);
+  color:var(--ink);
+  font-family:'Noto Sans KR','Malgun Gothic',sans-serif;
+  font-weight:700;
+  font-size:13.5px;
+  line-height:1.4;
+  padding:12px 14px;
+  border-radius:12px;
+  margin-top:16px;
+}
+.save-cta .save-icon{font-size:16px;}
+.follow-row{
+  display:flex;
+  gap:8px;
+  margin-top:12px;
+}
+.pill{
+  font-family:'Noto Sans KR','Malgun Gothic',sans-serif;
+  font-weight:700;
+  font-size:13.5px;
+  background:var(--ink);
+  color:var(--sun);
+  padding:11px 16px;
+  border-radius:999px;
+  white-space:nowrap;
+}
+.pill.ghost{
+  background:transparent;
+  border:2px solid currentColor;
+  color:currentColor;
+}
+
+/* ---------- image export ---------- */
+.export-row{
+  display:flex;
+  justify-content:center;
+  margin:0 0 30px;
+}
+.export-btn{
+  font-family:'Noto Sans KR','Malgun Gothic',sans-serif;
+  font-weight:700;
+  font-size:14px;
+  background:var(--ink);
+  color:var(--sun);
+  border:none;
+  padding:13px 22px;
+  border-radius:999px;
+  cursor:pointer;
+}
+.export-btn:disabled{opacity:.6;cursor:default;}
+.export-all-row{display:flex;justify-content:center;margin:0 0 20px;}
+.export-all-btn{
+  font-family:'Noto Sans KR','Malgun Gothic',sans-serif;
+  font-weight:700;
+  font-size:13px;
+  background:transparent;
+  color:var(--ink);
+  border:2px solid var(--ink);
+  padding:9px 16px;
+  border-radius:999px;
+  cursor:pointer;
+}
+.export-all-btn:disabled{opacity:.5;cursor:default;}
+.export-panel{display:none;max-width:640px;margin:0 auto 40px;padding:0 20px;}
+.export-panel.show{display:block;}
+.export-panel .export-title{font-weight:700;font-size:14px;margin:0 0 4px;}
+.export-panel .export-desc{font-size:12.5px;color:#787c8f;margin:0 0 16px;line-height:1.6;}
+.export-grid{display:flex;flex-direction:column;gap:18px;}
+.export-item img{width:100%;display:block;border-radius:12px;}
+.export-item-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px;}
+.export-cap{font-size:12px;font-weight:600;color:#787c8f;margin:0;}
+.export-save-btn{
+  font-family:'Noto Sans KR','Malgun Gothic',sans-serif;
+  font-weight:700;
+  font-size:12.5px;
+  background:var(--ink);
+  color:var(--sun);
+  border:none;
+  padding:8px 14px;
+  border-radius:999px;
+  cursor:pointer;
+  white-space:nowrap;
+}
+.export-save-btn:disabled{opacity:.6;cursor:default;}
+
+/* ---------- notes ---------- */
+.notes{
+  max-width:640px;
+  margin:0 auto;
+  padding:0 20px;
+  display:flex;
+  flex-direction:column;
+  gap:34px;
+}
+.section-block h3{
+  font-family:'Noto Sans KR','Malgun Gothic',sans-serif;
+  font-weight:700;
+  font-size:18px;
+  line-height:1.4;
+  margin:0 0 14px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.section-block h3::before{
+  content:"";
+  width:8px;height:8px;
+  background:var(--coral);
+  border-radius:2px;
+  display:inline-block;
+}
+
+.hook-line{
+  background:var(--paper);
+  border-left:4px solid var(--coral);
+  border-radius:0 10px 10px 0;
+  padding:14px 16px;
+  font-weight:700;
+  font-size:14px;
+  line-height:1.6;
+  margin:0 0 16px;
+}
+
+.cue{
+  display:flex;
+  gap:14px;
+  padding:11px 0;
+  border-bottom:1px solid var(--ground-line);
+}
+.cue:last-child{border-bottom:none;}
+.cue time{
+  flex:0 0 auto;
+  font-family:'IBM Plex Mono',monospace;
+  font-weight:700;
+  font-size:11.5px;
+  background:var(--ink);
+  color:var(--sun);
+  padding:4px 7px;
+  border-radius:5px;
+  height:fit-content;
+}
+.cue .cap{margin:0 0 3px;font-weight:700;font-size:13.5px;}
+.cue .vo{margin:0;font-size:12.5px;color:#787c8f;line-height:1.55;}
+
+.meta-grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:12px;
+}
+.meta-card{
+  background:var(--paper);
+  border-radius:12px;
+  padding:14px 16px;
+  font-size:13px;
+  line-height:1.6;
+}
+.meta-card b{
+  display:block;
+  font-weight:700;
+  font-size:14px;
+  margin-bottom:5px;
+}
+
+.caption-box{
+  background:var(--paper);
+  border-radius:12px;
+  padding:18px;
+  font-size:14px;
+  line-height:1.7;
+  white-space:pre-line;
+}
+
+.tags{display:flex;flex-wrap:wrap;gap:7px;}
+.tag{
+  font-family:'Noto Sans KR','Malgun Gothic',sans-serif;
+  font-weight:700;
+  font-size:12.5px;
+  padding:6px 11px;
+  border-radius:999px;
+  background:var(--paper);
+  color:var(--ink);
+}
+
+.footer-note{
+  text-align:center;
+  font-size:11.5px;
+  font-weight:600;
+  color:#9296a6;
+  margin-top:48px;
+  padding:0 20px;
+}
+</style>
+
+<div class="wrap">
+
+  <div class="masthead">
+    <span class="eyebrow-tag">Card News · Reels Kit</span>
+    <h1>이 단축키 모르면 오늘도 야근입니다</h1>
+    <p>마우스 던지고 칼퇴각 잡는 엑셀 단축키 5 — 2026.08.29</p>
+  </div>
+
+  <p class="rail-hint">옆으로 밀어서 카드 넘기기 <span class="arrow">→</span></p>
+
+  <div class="rail">
+
+    <section class="card card--hook bg-ink">
+      <span class="brand cover-tag">@workmaster90 · 엑셀 워크노트</span>
+
+      <div class="cover-art">
+        <svg viewBox="0 0 160 140" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <!-- scattered paper flicks -->
+          <path d="M18 92 l-8 -4 M140 90 l9 -3 M30 78 l-6 -6 M128 76 l7 -6" stroke="#141414" stroke-width="2.4" stroke-linecap="round" opacity=".4"/>
+
+          <!-- paper pile -->
+          <path d="M14 118 l17 -8 l16 6 l15 -7 l16 7 l15 -6 l15 8 v14 h-94 z" fill="#FFFFFF" stroke="#141414" stroke-width="3" stroke-linejoin="round"/>
+          <path d="M23 114 h8 M47 111 h8 M71 113 h8 M95 111 h8" stroke="#141414" stroke-width="1.8" stroke-linecap="round" opacity=".45"/>
+
+          <!-- torn corner sheets sticking out -->
+          <path d="M8 116 l10 -18 l9 4 l-7 16 z" fill="#FFFFFF" stroke="#141414" stroke-width="2.6" stroke-linejoin="round"/>
+          <path d="M133 114 l9 -17 l10 5 l-8 15 z" fill="#FFFFFF" stroke="#141414" stroke-width="2.6" stroke-linejoin="round"/>
+
+          <!-- arms resting on pile -->
+          <path d="M66 78 q-16 8 -20 30" stroke="#141414" stroke-width="4" stroke-linecap="round" fill="none"/>
+          <circle cx="45" cy="109" r="4.5" fill="#141414"/>
+          <path d="M94 78 q16 8 20 30" stroke="#141414" stroke-width="4" stroke-linecap="round" fill="none"/>
+          <circle cx="115" cy="109" r="4.5" fill="#141414"/>
+
+          <!-- torso -->
+          <path d="M58 66 q22 -14 44 0 l4 30 h-52 z" fill="var(--coral)" stroke="#141414" stroke-width="3" stroke-linejoin="round"/>
+
+          <!-- head -->
+          <circle cx="80" cy="34" r="26" fill="#FFFFFF" stroke="#141414" stroke-width="3.2"/>
+          <circle cx="70" cy="33" r="2.6" fill="#141414"/>
+          <circle cx="90" cy="33" r="2.6" fill="#141414"/>
+          <path d="M72 46 h16" stroke="#141414" stroke-width="2.6" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <h2>
+        <span class="line1">이 단축키 모르면</span>
+        <span class="line2">오늘도 야근입니다</span>
+      </h2>
+      <p class="sub">마우스 던지고 칼퇴각 잡는<br>진짜 쓰는 엑셀 단축키 5</p>
+    </section>
+
+    <section class="card bg-sun">
+      <span class="brand">01 / 05</span>
+      <h2>필터, 클릭 세 번<br>대신 한 방</h2>
+      <div class="keys">
+        <span class="key">CTRL</span><span class="plus">+</span>
+        <span class="key">SHIFT</span><span class="plus">+</span>
+        <span class="key">L</span>
+      </div>
+      <p class="desc">표 안 셀 하나만 선택하고 누르면 머리글에 필터 화살표가 바로 생겨요.</p>
+      <div class="usage">표 안 아무 셀 선택 → Ctrl+Shift+L</div>
+      <span class="num">01</span>
+    </section>
+
+    <section class="card bg-mint">
+      <span class="brand">02 / 05</span>
+      <h2>오늘 날짜,<br>달력 없이 한 번에</h2>
+      <div class="keys">
+        <span class="key">CTRL</span><span class="plus">+</span>
+        <span class="key">;</span>
+      </div>
+      <p class="desc">보고서 작성일 적을 때마다 달력 볼 필요 없이 셀에 오늘 날짜가 바로 찍혀요.</p>
+      <div class="usage">날짜 넣을 셀 선택 → Ctrl+세미콜론(;)</div>
+      <span class="num">02</span>
+    </section>
+
+    <section class="card bg-sun">
+      <span class="brand">03 / 05</span>
+      <h2>데이터 끝까지<br>순간이동</h2>
+      <div class="keys">
+        <span class="key">CTRL</span><span class="plus">+</span>
+        <span class="key">↓↑←→</span>
+      </div>
+      <p class="desc">스크롤 수백 번 내리지 않고 표의 맨 끝, 맨 위, 맨 옆으로 바로 점프해요.</p>
+      <div class="usage">셀 선택 → Ctrl+방향키</div>
+      <span class="num">03</span>
+    </section>
+
+    <section class="card bg-mint">
+      <span class="brand">04 / 05</span>
+      <h2>자동합계,<br>수식 안 쳐도 끝</h2>
+      <div class="keys">
+        <span class="key">ALT</span><span class="plus">+</span>
+        <span class="key">=</span>
+      </div>
+      <p class="desc">숫자 아래 빈 셀에서 누르면 SUM 수식이 범위까지 알아서 채워져요.</p>
+      <div class="usage">합계 낼 빈 셀 선택 → Alt+=</div>
+      <span class="num">04</span>
+    </section>
+
+    <section class="card bg-sun">
+      <span class="brand">05 / 05</span>
+      <span class="save-badge">💾 저장 필수</span>
+      <h2>반복도,<br>$ 고정도 이 키 하나</h2>
+      <div class="keys">
+        <span class="key">F4</span>
+      </div>
+      <p class="desc">방금 한 서식·행 삽입은 그대로 반복하고, 수식 안에서는 절대참조 $를 순서대로 바꿔줘요.</p>
+      <div class="usage">반복은 F4 연타 / 참조 고정은 셀 클릭 후 F4</div>
+      <span class="num">05</span>
+    </section>
+
+    <section class="card cta-card bg-ink">
+      <span class="brand">@workmaster90 · 워크노트</span>
+      <h2>저장하고,<br>내일 바로<br>써보세요</h2>
+      <p class="sub">AI 시대에도 안 죽는 직장인 생산성 팁,<br>팔로우하고 매일 아침 받아보세요</p>
+      <div class="save-cta"><span class="save-icon">📌</span>다시 볼 사람은 지금 저장 — 나중엔 못 찾아요</div>
+      <div class="follow-row">
+        <span class="pill">팔로우 →</span>
+        <span class="pill ghost">@workmaster90</span>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="export-row">
+    <button id="exportBtn" class="export-btn">📥 카드 이미지로 저장하기</button>
+  </div>
+
+  <div class="export-panel" id="exportPanel">
+    <p class="export-title">저장용 이미지 (PNG · 1080px)</p>
+    <p class="export-desc" id="exportDesc">카드마다 "💾 다운로드" 버튼을 누르면 인스타그램 업로드용 PNG 파일로 저장됩니다.</p>
+    <div class="export-all-row"><button id="exportAllBtn" class="export-all-btn" type="button">전체 한 번에 다운로드</button></div>
+    <div class="export-grid" id="exportList"></div>
+  </div>
+
+  <div class="notes">
+
+    <div class="section-block">
+      <h3>릴스 스크립트 · 약 30초</h3>
+      <p class="hook-line">"혹시 아직도 필터, 마우스로 하나씩 누르고 계세요? 이 5개만 알아도 오늘 30분은 법니다."</p>
+
+      <div class="cue">
+        <time>00:00–03</time>
+        <div>
+          <p class="cap">자막 — "이거 모르면 오늘도 야근"</p>
+          <p class="vo">위 후킹 문장으로 시작, 지친 표정 → 화면 클로즈업</p>
+        </div>
+      </div>
+      <div class="cue">
+        <time>00:03–10</time>
+        <div>
+          <p class="cap">자막 — "필터 Ctrl+Shift+L"</p>
+          <p class="vo">"표 아무 셀이나 클릭하고 이 세 키만 누르면 필터 완성."</p>
+        </div>
+      </div>
+      <div class="cue">
+        <time>00:10–16</time>
+        <div>
+          <p class="cap">자막 — "오늘 날짜 Ctrl+;"</p>
+          <p class="vo">"보고서 날짜, 달력 열지 말고 이걸로 끝내세요."</p>
+        </div>
+      </div>
+      <div class="cue">
+        <time>00:16–22</time>
+        <div>
+          <p class="cap">자막 — "끝까지 이동 Ctrl+방향키"</p>
+          <p class="vo">"스크롤 대신 이 키로 표 끝까지 순간이동."</p>
+        </div>
+      </div>
+      <div class="cue">
+        <time>00:22–27</time>
+        <div>
+          <p class="cap">자막 — "자동합계 Alt+="</p>
+          <p class="vo">"빈 셀에서 누르면 합계 수식 자동 완성."</p>
+        </div>
+      </div>
+      <div class="cue">
+        <time>00:27–30</time>
+        <div>
+          <p class="cap">자막 — "지금 저장 📌 안 하면 다음에 못 찾아요"</p>
+          <p class="vo">CTA 발화(저장 먼저, 팔로우는 그다음) 후 @workmaster90 로고/계정명 노출하며 마무리</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="meta-grid">
+      <div class="meta-card">
+        <b>배경음악 제안</b>
+        경쾌한 로파이 비트 or 미드템포 업비트 코퍼레이트 트랙 (릴스 오디오 라이브러리 내 "Upbeat / Corporate Lo-fi" 카테고리). BPM 100~115, 후렴 없는 루프형 추천.
+      </div>
+      <div class="meta-card">
+        <b>촬영 · 편집 가이드</b>
+        세로 9:16 화면 캡처 + 손 클로즈업 컷 교차. 단축키 전환마다 화면 전환 효과 1회, 키캡 자막은 항상 화면 중앙 하단 고정. 실제 엑셀 조작 화면 녹화 필수.
+      </div>
+    </div>
+
+    <div class="section-block">
+      <h3>게시용 캡션</h3>
+      <div class="caption-box">매일 야근하는 이유, 사실 '단축키'일 수도 있어요.
+📌 저장해두고 내일 바로 써보세요 — 마우스 클릭 100번 줄이는 엑셀 단축키 5개.
+필터·날짜·이동·합계·반복까지 이 5개만 손에 익으면 확실히 달라집니다.
+댓글에 여러분만의 엑셀 꿀팁 단축키도 공유해주세요!</div>
+    </div>
+
+    <div class="section-block">
+      <h3>해시태그</h3>
+      <div class="tags">
+        <span class="tag">#엑셀단축키</span>
+        <span class="tag">#엑셀꿀팁</span>
+        <span class="tag">#직장인꿀팁</span>
+        <span class="tag">#칼퇴</span>
+        <span class="tag">#칼퇴각</span>
+        <span class="tag">#엑셀초보</span>
+        <span class="tag">#오피스꿀팁</span>
+        <span class="tag">#업무효율</span>
+        <span class="tag">#엑셀공부</span>
+        <span class="tag">#직장인일상</span>
+        <span class="tag">#사무직</span>
+        <span class="tag">#productivity</span>
+        <span class="tag">#exceltips</span>
+        <span class="tag">#officehacks</span>
+        <span class="tag">#워라밸</span>
+      </div>
+    </div>
+
+  </div>
+
+  <p class="footer-note">디자인 v6 · 플랫 컬러 + 초대형 타이포 + 저장(Save) CTA 강화 + PNG 다운로드 버튼</p>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+(function(){
+  var btn = document.getElementById('exportBtn');
+  var allBtn = document.getElementById('exportAllBtn');
+  var panel = document.getElementById('exportPanel');
+  var list = document.getElementById('exportList');
+  var desc = document.getElementById('exportDesc');
+  if(!btn) return;
+
+  var baseName = (document.title || 'card').replace(/[\\\/:*?"<>|]/g,'').trim() || 'card';
+  var items = []; // {canvas, filename, saveBtn}
+
+  function getDownloads(){
+    try{
+      if(window.claude && typeof window.claude.use === 'function'){
+        return window.claude.use('downloads');
+      }
+    }catch(e){}
+    return Promise.resolve(null);
+  }
+
+  function saveOne(item){
+    return getDownloads().then(function(downloads){
+      if(!downloads){
+        item.saveBtn.textContent = '⚠️ 이미지를 길게 눌러(모바일)·우클릭(PC) 저장';
+        item.saveBtn.disabled = true;
+        throw {code:'unavailable'};
+      }
+      item.saveBtn.disabled = true;
+      item.saveBtn.textContent = '저장 중…';
+      return new Promise(function(resolve, reject){
+        item.canvas.toBlob(function(blob){
+          if(!blob){ reject({code:'bad_request'}); return; }
+          downloads.save({filename: item.filename, data: blob}).then(function(){
+            item.saveBtn.textContent = '✅ 저장됨';
+            resolve();
+          }).catch(function(err){
+            item.saveBtn.textContent = (err && err.code === 'declined') ? '취소됨 · 다시 시도' : '⚠️ 실패 · 다시 시도';
+            item.saveBtn.disabled = false;
+            reject(err);
+          });
+        }, 'image/png');
+      });
+    });
+  }
+
+  btn.addEventListener('click', function(){
+    btn.disabled = true;
+    btn.textContent = '이미지 생성 중… (몇 초 걸려요)';
+    list.innerHTML = '';
+    items = [];
+    (async function(){
+      try{
+        var cards = document.querySelectorAll('.rail .card');
+        for(var i=0;i<cards.length;i++){
+          var card = cards[i];
+          var targetW = 1080;
+          var scale = Math.max(3, targetW / card.offsetWidth);
+          var canvas = await html2canvas(card, {scale: scale, backgroundColor: null, useCORS: true});
+
+          var wrap = document.createElement('div');
+          wrap.className = 'export-item';
+          var img = document.createElement('img');
+          img.src = canvas.toDataURL('image/png');
+          img.alt = 'card-' + (i+1);
+          var row = document.createElement('div');
+          row.className = 'export-item-row';
+          var cap = document.createElement('p');
+          cap.className = 'export-cap';
+          cap.textContent = (i+1) + ' / ' + cards.length;
+          var saveBtn = document.createElement('button');
+          saveBtn.type = 'button';
+          saveBtn.className = 'export-save-btn';
+          saveBtn.textContent = '💾 다운로드';
+          row.appendChild(cap);
+          row.appendChild(saveBtn);
+          wrap.appendChild(img);
+          wrap.appendChild(row);
+          list.appendChild(wrap);
+
+          var item = {canvas: canvas, filename: baseName + '-' + (i+1) + '.png', saveBtn: saveBtn};
+          items.push(item);
+          saveBtn.addEventListener('click', function(it){
+            return function(){ saveOne(it).catch(function(){}); };
+          }(item));
+        }
+        panel.classList.add('show');
+        panel.scrollIntoView({behavior:'smooth', block:'start'});
+        btn.textContent = '✅ 완료! 아래에서 카드별로 다운로드하세요';
+
+        // Hide the fallback hint once we know downloads actually works here
+        getDownloads().then(function(downloads){
+          if(!downloads && desc){
+            desc.textContent = '이 화면에서는 다운로드 버튼이 지원되지 않아요 — 위 이미지를 길게 눌러(모바일) 또는 우클릭(PC) 후 저장하세요.';
+          }
+        });
+      }catch(err){
+        btn.textContent = '⚠️ 생성 실패 — 다시 시도';
+      }finally{
+        btn.disabled = false;
+      }
+    })();
+  });
+
+  if(allBtn){
+    allBtn.addEventListener('click', function(){
+      if(!items.length) return;
+      allBtn.disabled = true;
+      var orig = allBtn.textContent;
+      allBtn.textContent = '저장 중… (하나씩 확인해주세요)';
+      (async function(){
+        for(var i=0;i<items.length;i++){
+          try{ await saveOne(items[i]); }catch(e){ /* keep going even if one is declined */ }
+        }
+        allBtn.textContent = orig;
+        allBtn.disabled = false;
+      })();
+    });
+  }
+})();
+</script>
+
+</body></html>
