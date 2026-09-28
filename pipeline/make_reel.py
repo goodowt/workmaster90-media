@@ -6,6 +6,8 @@ usage: make_reel.py <cards_dir> <bgm.mp3> <out.mp4>
 - 9:16 패딩/크롭 금지 — 카드 원본 비율(4:5) 그대로 발행해야 인스타 릴스 플레이어에서 잘리지 않음
 - 켄번스(줌/팬)는 커버 카드(1번)에만 적용 — 나머지 카드는 정지 이미지 + 크로스페이드 전환만
   (팁/CTA 카드까지 움직이면 화면이 어지럽다는 피드백, 2026-09-23)
+- 커버 줌은 첫 PUNCH_FRAMES 동안 빠르게 확대(펀치인)한 뒤 정지 — 스크롤을 멈추는
+  "훅" 역할. 예전의 2초짜리 느린 등속 줌은 체감이 안 돼서 폐기 (후킹 강화, 2026-09-28)
 - 최대 줌 1.05, y 앵커는 하단 고정(위쪽에서만 잘림) — 상/하단 텍스트 잘림 방지 검증값
 """
 import glob
@@ -18,13 +20,14 @@ import imageio_ffmpeg
 CLIP = 2.0
 FADE = 0.35
 FPS = 30
-DUR = 60  # zoompan 진행 프레임 수 (CLIP*FPS)
-ZMAX = 0.05
+PUNCH_FRAMES = 12  # 0.4초 @ 30fps 안에 줌 완료
+ZMAX = 0.10
 
 
 def zoom_expr():
-    # 커버 카드 전용: 서서히 줌인, 하단 고정
-    return f"1+{ZMAX}*on/{DUR}", "iw/2-(iw/zoom/2)", "ih-(ih/zoom)"
+    # 커버 카드 전용: 0.4초 안에 빠르게 펀치인 후 정지, 하단 고정
+    z = f"if(lte(on,{PUNCH_FRAMES}),1+{ZMAX}*on/{PUNCH_FRAMES},1+{ZMAX})"
+    return z, "iw/2-(iw/zoom/2)", "ih-(ih/zoom)"
 
 
 def main():
