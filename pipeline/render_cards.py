@@ -10,6 +10,7 @@ usage: render_cards.py <html_path> <out_dir>
 import glob
 import os
 import sys
+from pathlib import Path
 
 from PIL import Image
 from playwright.sync_api import sync_playwright
@@ -19,7 +20,7 @@ SHIFT = 25            # 하단 여백 확보용(px @1080)
 INS_Y = H - 60        # 아래쪽에서 같은 높이의 띠를 끼워 넣는 위치
 
 FB = "https://cdn.jsdelivr.net/npm/@fontsource"
-FONT_DIR = "/tmp/wm_fonts"
+FONT_DIR = os.environ.get("WM_FONT_DIR", "/tmp/wm_fonts")  # 로컬(윈도우) 테스트용 오버라이드
 KO_RANGE = "U+1100-11FF,U+3000-303F,U+3130-318F,U+A960-A97F,U+AC00-D7FF,U+FF00-FFEF"
 LATIN_RANGE = ("U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,"
                "U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD")
@@ -41,17 +42,19 @@ def font_css():
     for w in (400, 500, 700, 900):
         ko = fetch(f"noto-sans-kr/files/noto-sans-kr-korean-{w}-normal.woff2")
         la = fetch(f"noto-sans-kr/files/noto-sans-kr-latin-{w}-normal.woff2")
-        css.append(f"@font-face{{font-family:'Noto Sans KR';font-weight:{w};font-display:block;src:url(file://{ko}) format('woff2');unicode-range:{KO_RANGE};}}")
-        css.append(f"@font-face{{font-family:'Noto Sans KR';font-weight:{w};font-display:block;src:url(file://{la}) format('woff2');unicode-range:{LATIN_RANGE};}}")
+        css.append(f"@font-face{{font-family:'Noto Sans KR';font-weight:{w};font-display:block;src:url({Path(ko).as_uri()}) format('woff2');unicode-range:{KO_RANGE};}}")
+        css.append(f"@font-face{{font-family:'Noto Sans KR';font-weight:{w};font-display:block;src:url({Path(la).as_uri()}) format('woff2');unicode-range:{LATIN_RANGE};}}")
     for w in (600, 700):
         mo = fetch(f"ibm-plex-mono/files/ibm-plex-mono-latin-{w}-normal.woff2")
-        css.append(f"@font-face{{font-family:'IBM Plex Mono';font-weight:{w};font-display:block;src:url(file://{mo}) format('woff2');}}")
+        css.append(f"@font-face{{font-family:'IBM Plex Mono';font-weight:{w};font-display:block;src:url({Path(mo).as_uri()}) format('woff2');}}")
     # 카드 뒤 페이지 배경이 둥근 모서리에 찍히지 않도록 투명 처리 (기존 html2canvas 결과와 동일)
     css.append("html,body,.rail{background:transparent!important}")
     return "".join(css)
 
 
 def find_chrome():
+    if os.environ.get("WM_CHROME"):  # 로컬 테스트: 설치된 Edge/Chrome 경로
+        return os.environ["WM_CHROME"]
     hits = sorted(glob.glob("/opt/pw-browsers/chromium-*/chrome-linux/chrome"))
     return hits[-1] if hits else None
 
@@ -105,7 +108,7 @@ def main():
         page.on("requestfailed", lambda r: failed.append(r.url))
         allowed = ("file:", "data:")
         page.route("**/*", lambda route: route.continue_() if route.request.url.startswith(allowed) else route.abort())
-        page.goto("file://" + html_path, wait_until="load")
+        page.goto(Path(html_path).as_uri(), wait_until="load")
         page.add_style_tag(content=font_css())
         page.evaluate("document.fonts.ready.then(()=>1).catch(()=>1)")
         page.evaluate("Promise.all(['400','500','700','900'].map(w=>document.fonts.load(w+' 20px \"Noto Sans KR\"','가A').catch(()=>null)))")
