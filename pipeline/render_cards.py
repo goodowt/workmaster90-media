@@ -55,7 +55,9 @@ def font_css():
 def find_chrome():
     if os.environ.get("WM_CHROME"):  # 로컬 테스트: 설치된 Edge/Chrome 경로
         return os.environ["WM_CHROME"]
-    hits = sorted(glob.glob("/opt/pw-browsers/chromium-*/chrome-linux/chrome"))
+    if os.path.exists("/opt/pw-browsers/chromium"):
+        return "/opt/pw-browsers/chromium"
+    hits = sorted(glob.glob("/opt/pw-browsers/chromium-*/chrome-linux*/chrome"))
     return hits[-1] if hits else None
 
 
